@@ -1,0 +1,52 @@
+<main [ngClass]='(mode === 2)?"leaving":"staying"'>
+
+    <div class="content" [ngClass]='(mode === 2)?"leaving":"staying"'>
+        <section class='showOff' [ngClass]='(exploring)?"active":"unactive"'>
+            <button class='play' (click)='playRandom()'> </button>
+            <div class= 'pressSpace'>Press space to begin</div>
+
+            <div class = 'scroll' [ngClass]='(exploring)?"active":"unactive"'>
+                <a><span></span>Explore</a>
+
+            </div>
+        </section>
+        <!-- later to be done
+        <section class='info' *ngIf='(mode === 1 || mode === 0)'>
+            
+            <div class="albums">
+                <button class="album-name active" >Off the Grid</button>
+                <button class="album-name" >Circus in the sky</button>
+                <button class="album-name" >Flying colors</button>
+            </div>
+            <div class="album">
+                <div class="album-pic">
+
+                </div>
+                <div class="album-back"></div>
+            </div>
+            <div class="playlist">
+                
+                <div class="playlist-list">
+                    <div><button class="song-play"></button>01 snow in LA</div>
+                    <div><button class="song-play"></button>02 fuck up</div>
+                    <div><button class="song-play"></button>03 dead yet(with phem) </div>
+                    <div><button class="song-play"></button>04 blue skies </div>
+                    <div><button class="song-play"></button>05 crystal cage </div>
+                    <div><button class="song-play"></button>06 flames </div>
+                    <div><button class="song-play"></button>07 dorothy </div>
+                </div>
+                <button class="playlist-play">
+                    Listen to this album
+                </button>
+            </div>
+            
+            
+        </section>               
+        -->
+     
+    </div>
+
+       <canvas id='triangles' #triangles>
+
+    </canvas> 
+</main>

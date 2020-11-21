@@ -1,0 +1,58 @@
+<section>
+    <div class="img-bg">
+             
+        <img src="{{currentAlbum.albumCover}}" alt=""><div class="img-gradient"></div>   
+    </div>
+    
+    <!--
+            <div class="album-choose">
+                <div class="album-pic" *ngFor='let album of albumsArray'>
+                    <img src="{{currentAlbum.albumCover}}" alt="">
+                </div>                
+            </div>
+
+    -->
+    <div class="albums">
+ 
+        <div class="album-choose">
+            <button class="switch switch-left" (click)='flowLeft()'>
+
+            </button>
+            <div class="album-pic" *ngFor='let album of albumsArray;index as i' id='lol' (click)='clickAlbum(i)'>
+                <!-- 
+                    
+                -->
+                    <img src="{{album.albumCover}}" alt="">
+            </div>      
+            <button class="switch switch-right" (click)='flowRight()'>
+
+            </button>       
+            <section class='album active'>
+                <div class="album-name">
+                    {{ currentAlbum.albumName}}
+                </div>
+                <div class="album-artist">
+                    {{ currentAlbum.albumArtist}}
+                </div>
+            </section>  
+        </div>
+
+    </div>
+
+    <div class="songs">
+        <div class="song" *ngFor='let song of currentAlbum.songs; index as i' [ngClass]="(currentSong === song)?'active':'inactive'" >
+            <div class="song-number">
+                <div *ngIf='i < 9'>0</div>
+                {{i + 1}}
+            </div>
+
+            <button class="song-play song-button" *ngIf='currentSong !== song' (click)='changeSong(song)'></button>
+            <button class="song-pause song-button" *ngIf='currentSong === song && playing === true' (click)='pauseSong()'></button>
+            <button class="song-unpause song-button" *ngIf='currentSong === song && playing === false' (click)='unpauseSong()'></button>
+            <div class="song-duration">{{song.duration}}</div>
+            <div class='song-name'>{{song.name}}</div>
+            
+        </div>        
+    </div>
+
+</section>

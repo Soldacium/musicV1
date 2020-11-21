@@ -1,0 +1,25 @@
+<section class='more' [ngClass]="(more==true)?'active':'naah'" id='menu'>
+    <div class="wave"></div>
+
+    <!--
+    <div class="wrap">
+        <ul class="links">
+            <li><a [routerLink]='["/welcome"]' [ngClass]="(router.isActive('/welcome',true)||router.isActive('',true))?'active':'naah'">Home</a></li>
+            <li><a [routerLink]='["/player"]' [ngClass]="(router.isActive('/player',true))?'active':'naah'">Player</a></li>
+            <li><a [routerLink]='["/tests"]' [ngClass]="(router.isActive('/tests',true))?'active':'naah'">Tests</a></li>
+        </ul>
+    </div>
+
+    -->
+
+    <a class="logo" [routerLink]='["/welcome"]'>
+
+    </a>
+
+    <div class="router-wrap">
+        <router-outlet>
+            
+        </router-outlet>
+    </div>
+
+</section> 

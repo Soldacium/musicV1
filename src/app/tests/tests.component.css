@@ -1,0 +1,136 @@
+main{
+  height: 100vh;
+  overflow: hidden;
+}
+
+.file-wrap{
+    position: absolute;
+    top: 30%;
+    left: 10%;
+}
+
+.audio-wrap{
+    bottom: 0;
+    left: 40%;
+    display: flex;
+    
+
+    position: absolute;
+    z-index: 100;
+    display: none;
+}
+
+audio{
+    width: 300px;
+}
+
+#canvas2d{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+canvas{
+    z-index: 100;
+}
+
+button{
+    padding: 1rem 3rem;
+    background-color: blueviolet;
+    color: white;
+    position: absolute;
+    top: 25%;
+    right: 0;
+    display: none;
+}
+
+/* LOADING */
+body {
+    background: #e4e4e5;
+  }
+  
+  .loading {
+    transform: translate(-50%, -50%);
+    height: 81px;
+    width: 90px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transition: 0.5s;
+  }
+
+  .loading.visible{
+      opacity: 1;
+  }
+
+  .loading.naah{
+      opacity: 0;
+  }
+  
+  .tri {
+    position: absolute;
+    animation: pulse 750ms ease-in infinite;
+    border-top: 27px solid #ffffff;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 0px;
+  }
+  .tri.invert {
+    border-top: 0px;
+    border-bottom: 27px solid #ffffff;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+  }
+  .tri:nth-child(1) {
+    left: 30px;
+  }
+  .tri:nth-child(2) {
+    left: 15px;
+    top: 27px;
+    animation-delay: -125ms;
+  }
+  .tri:nth-child(3) {
+    left: 30px;
+    top: 27px;
+  }
+  .tri:nth-child(4) {
+    left: 45px;
+    top: 27px;
+    animation-delay: -625ms;
+  }
+  .tri:nth-child(5) {
+    top: 54px;
+    animation-delay: -250ms;
+  }
+  .tri:nth-child(6) {
+    top: 54px;
+    left: 15px;
+    animation-delay: -250ms;
+  }
+  .tri:nth-child(7) {
+    top: 54px;
+    left: 30px;
+    animation-delay: -375ms;
+  }
+  .tri:nth-child(8) {
+    top: 54px;
+    left: 45px;
+    animation-delay: -500ms;
+  }
+  .tri:nth-child(9) {
+    top: 54px;
+    left: 60px;
+    animation-delay: -500ms;
+  }
+  @keyframes pulse {
+    0% {
+      opacity: 0;
+    }
+    16.666% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
