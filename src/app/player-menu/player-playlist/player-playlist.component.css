@@ -33,8 +33,6 @@ section{
     
 }
 
-/* ALBUM FLOW */
-
 .albums{
     z-index: 502;
 }
@@ -53,12 +51,6 @@ section{
     left: 50%;
     transform: translate(-50%, 0);
 }
-
-
-/*
-* Coverflow
-*/
-
 
 .album-choose{
     height: 500px;
@@ -100,18 +92,11 @@ section{
     -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.6, transparent), to(white)); 
 }
 
-
-
-
 .album-pic > img{
     height: 100%;
     border-radius: 0.2rem;
     margin-bottom: 2rem;
 }
-
-/*
-* Controls
-*/
 
 .switch{
     width: 2rem;

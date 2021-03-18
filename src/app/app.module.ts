@@ -7,7 +7,6 @@ import { PlayerComponent } from './player/player.component';
 import { RouterModule } from '@angular/router';
 import { TestsComponent } from './tests/tests.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { PlayerNothingComponent } from './player-menu/player-nothing/player-nothing.component';
 import { PlayerMenuComponent } from './player-menu/player-menu.component';
 import { PlayerPlaylistComponent } from './player-menu/player-playlist/player-playlist.component';
 import { MusicServiceService } from './services/music-service.service';
@@ -18,7 +17,6 @@ import { MusicServiceService } from './services/music-service.service';
     PlayerComponent,
     TestsComponent,
     WelcomeComponent,
-    PlayerNothingComponent,
     PlayerMenuComponent,
     PlayerPlaylistComponent
   ],
@@ -42,10 +40,6 @@ import { MusicServiceService } from './services/music-service.service';
           {
             path: 'playlist',
             component: PlayerPlaylistComponent
-          },
-          {
-            path: 'nothing',
-            component: PlayerNothingComponent
           }
         ]
       },

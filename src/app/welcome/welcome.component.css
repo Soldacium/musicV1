@@ -9,8 +9,6 @@ main{
     transition: 4s;
 }
 
-
-
 main.leaving{
     background-color: transparent;
 }
@@ -178,17 +176,6 @@ section{
         opacity: 0;
     }
 }
-
-
-
-
-
-
-/* Artist section */
-
-
-
-
 
 .info{
     background-color: rgba(226, 226, 226, 0);

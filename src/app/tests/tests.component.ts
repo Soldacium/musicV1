@@ -45,14 +45,9 @@ export class TestsComponent implements OnInit {
     this.engServ.animate();
 
     this.gainNode = this.audioCtx.createGain();
-    this.audio.nativeElement.crossOrigin = "anonymous";
+    this.audio.nativeElement.crossOrigin = 'anonymous';
     this.audio.nativeElement.volume = 0.1;
     this.audioContext(this.audio.nativeElement);
-
-    //this.fetch(this.audioSrc,this.onSuccess);
-
-    
-
   }
 
   setSubscribtions(){
@@ -70,13 +65,11 @@ export class TestsComponent implements OnInit {
     });
   }
 
-
-
   fetch(url, resolve) {
-    const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + url
-    let request = new XMLHttpRequest();
+    const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + url;
+    const request = new XMLHttpRequest();
     request.open('GET', combinedUrl, true);
-    console.log(this.audioCtx)
+    // console.log(this.audioCtx);
     this.loading = true;
 
     request.setRequestHeader('Access-Control-Allow-Origin', '*');
@@ -86,38 +79,28 @@ export class TestsComponent implements OnInit {
     );
 
     request.responseType = 'arraybuffer';
-    request.onload = () => { 
-      let audioData = request.response;
-      console.log(this.audioSrc)
-      console.log(audioData)
+    request.onload = () => {
+      const audioData = request.response;
+      console.log(this.audioSrc);
+      console.log(audioData);
       this.audioCtx.decodeAudioData(audioData, (buffer) => {
-        let source = this.audioCtx.createBufferSource();
-        console.info('Got the buffer', buffer);
+        const source = this.audioCtx.createBufferSource();
         source.buffer = buffer;
         source.connect(this.audioCtx.destination);
         source.loop = false;
 
         this.audio.nativeElement.onended = () => {
-          console.log('im done')
           this.nextSong();
-          
-        }
+        };
 
-
-        // source.start();
         analyze(buffer)
         .then((tempo) => {
-          // the tempo could be analyzed
           console.log(tempo);
-         // this.logTempo(tempo);
           this.setupBeat(tempo);
           this.engServ.playing = true;
           this.loading = false;
-          this.audioCtx.resume()
-          this.audio.nativeElement.play()
-
-          //this.setupBeat(tempo)
-
+          this.audioCtx.resume();
+          this.audio.nativeElement.play();
         });
 
         }, this.onDecodeBufferError);
@@ -125,44 +108,54 @@ export class TestsComponent implements OnInit {
     request.send();
   }
   onSuccess(request) {
-    let audioData = request.response;
-    console.log(this.audioSrc)
-    console.log(audioData)
-    //this.audioCtx.decodeAudioData(audioData, this.onBuffer, this.onDecodeBufferError);
+    const audioData = request.response;
   }
   onDecodeBufferError(e) {
     console.log('Error decoding buffer: ' + e.message);
-    console.log(e);
   }
 
-
-
-
-
   setupBeat(tempo){
-    this.engServ.beatTime = 1/(tempo/60)*1000;
-    console.log(this.engServ.beatTime)
-    const hue = 340/360;
-    const saturation = 100/100;
-    const luminosity = 50/100;
+    this.engServ.beatTime = 1 / (tempo / 60) * 1000;
+    console.log(this.engServ.beatTime);
+    const hue = 340 / 360;
+    const saturation = 100 / 100;
+    const luminosity = 50 / 100;
     this.engServ.beatColors = [
-      [hue,saturation,luminosity],
-      [220/360,saturation,luminosity],
-      [270/360,saturation,luminosity]
-    ]
-    this.engServ.play()
+      [hue, saturation, luminosity],
+      [220 / 360, saturation, luminosity],
+      [270 / 360, saturation, luminosity]
+    ];
+    this.engServ.play();
   }
 
   logTempo(tempo){
     setTimeout(() => {
-      console.log('beat')
-      this.logTempo(tempo)
-    },1/(tempo/60)*1000)
+      this.logTempo(tempo);
+    }, 1 / (tempo / 60) * 1000);
   }
   play(song){
     this.audio.nativeElement.src = song.path;
     this.engServ.playing = false;
-    this.fetch(song.path,this.onSuccess)
+    this.fetch(song.path, this.onSuccess);// https://cors-anywhere.herokuapp.com/
+    /*
+    const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + song.path;
+    fetch(combinedUrl, {
+      credentials: 'include',
+      method: "GET",
+      mode: 'cors',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3000/',
+        'Access-Control-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept',
+        'Access-Control-Allow-Methods' : 'GET, POST, PATCH, PUT, DELETE, OPTIONS'
+      }),
+  })
+  .then(response => {
+    response.headers
+    console.log(response)
+      return response.text();
+  })
+  */
   }
   pauseAudio(){
     this.engServ.playing = false;
@@ -170,56 +163,40 @@ export class TestsComponent implements OnInit {
   }
   unpauseAudio(){
     this.audio.nativeElement.play();
-
-
     const audioBuffer = this.audioCtx.createBuffer(2, this.audioCtx.sampleRate * 314, this.audioCtx.sampleRate);
-    console.log(audioBuffer);
 
     analyze(audioBuffer)
     .then((tempo) => {
-        // the tempo could be analyzed
-        console.log('tempo');
-    });/*
-    */
+      console.log(tempo);
+    });
   }
 
   nextSong(){
-    this.musicService.songEnd()
+    this.musicService.songEnd();
   }
 
-
-
-
-
   audioContext(audioSource){
-    // clear
-    // this.analyser = undefined;
-    // this.dataArray = undefined;
-    // first, create something to analyze music with, audioContext analyser
-    let source = this.audioCtx.createMediaElementSource(audioSource);
+
+    const source = this.audioCtx.createMediaElementSource(audioSource);
     this.analyser = this.audioCtx.createAnalyser();
-    
+
     source.connect(this.analyser);
     this.analyser.connect(this.audioCtx.destination);
 
-    this.analyser.fftSize = 512; // fast fourier transform, the higher it gets, the better frequenct analysis bbecomes at the cost of providing fewer details in time domain
+    this.analyser.fftSize = 512;
     this.bufferLength = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.bufferLength);
     console.log(this.dataArray.buffer);
 
-    this.animate()
-
-    
+    this.animate();
   }
+
+
   animate() {
     requestAnimationFrame(() => {this.animate(); });
     this.analyser.getByteFrequencyData(this.dataArray);
     this.engServ.getMusicData(this.dataArray);
-    // tslint:disable-next-line: prefer-for-of
   }
-
-
-
 
 
 }

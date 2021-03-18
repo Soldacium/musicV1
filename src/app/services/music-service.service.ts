@@ -16,7 +16,6 @@ export class MusicServiceService {
   currentSong = 0;
   currentAlbum = '';
 
-  
   albums = {
     circus: {
       albumName: 'Circus in the sky',
@@ -49,7 +48,7 @@ export class MusicServiceService {
           path: 'https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus/05.mp3'
         },
         {
-          name: "Can't get read of this feeling",
+          name: 'Can\'t get read of this feeling',
           duration: '4:25',
           path: 'https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus/06.mp3'
         },
@@ -59,7 +58,7 @@ export class MusicServiceService {
           path: 'https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus/07.mp3'
         },
         {
-          name: "Life's midnight",
+          name: 'Life\'s midnight',
           duration: '4:02',
           path: 'https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus/08.mp3'
         },
@@ -127,38 +126,36 @@ export class MusicServiceService {
           path: 'https://raw.githubusercontent.com/Soldacium/musicmusic/master/where_are_my_friends/07.mp3'
         },
       ]
-    }  
-  }
+    }
+  };
 
-  
   constructor() { }
 
   getAlbums(){
-    return this.albums
+    return this.albums;
   }
 
   changeSong(song){
-    this.changedSong.emit(song)
+    this.changedSong.emit(song);
 
   }
 
   pauseSong(){
-    this.pausedSong.emit()
+    this.pausedSong.emit();
   }
 
   unpauseSong(){
-    this.unpausedSong.emit()
+    this.unpausedSong.emit();
   }
 
   songEnd(){
-    console.log('songEnded')
-    this.nextSong.emit()
+    console.log('songEnded');
+    this.nextSong.emit();
   }
 
-  setSettings(album: string,song: number ){
-    
-    //const settings = {album: album, song: song}
-    //console.log('i emitted settings', settings)
-    this.settings.emit()
+  setSettings(album: string, song: number ){
+    // const settings = {album: album, song: song}
+    // console.log('i emitted settings', settings)
+    this.settings.emit();
   }
 }

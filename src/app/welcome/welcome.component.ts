@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import Delaunator from 'delaunator';
-import { WelcomeEngineService } from './welcomeEngine.service'
+import { WelcomeEngineService } from './welcomeEngine.service';
 import { Router } from '@angular/router';
 import { MusicServiceService } from '../services/music-service.service';
 @Component({
@@ -16,27 +16,23 @@ export class WelcomeComponent implements OnInit {
 
   height = window.innerHeight;
   width = window.innerWidth;
-
-  pointsNum = 600;
+  pointsNum = 400;
   points = [];
-
   coords = [];
-
   mode = 1;
 
-  constructor(private engine: WelcomeEngineService, 
+  constructor(
+    private engine: WelcomeEngineService,
     private router: Router,
     private music: MusicServiceService) { }
 
   ngOnInit(): void {
-    for(let i = 0; i < this.pointsNum; i++){
+    for (let i = 0; i < this.pointsNum; i++){
       const x = Math.floor( Math.random() * this.width );
       const y = Math.floor( Math.random() * this.height );
-
-      this.points.push([x,y])
+      this.points.push([x, y]);
     }
     const delaunay = Delaunator.from(this.points);
-    console.log(delaunay.triangles);
     const triangles = delaunay.triangles;
 
     for (let i = 0; i < triangles.length; i += 3) {
@@ -46,41 +42,33 @@ export class WelcomeComponent implements OnInit {
           this.points[triangles[i + 2]]
       ]);
     }
-
-    console.log(this.coords)
-
-    const canvas: HTMLCanvasElement = document.querySelector('#triangles')
-    console.log(this.rendererCanvas)
-    this.initEngine()
-
-    this.addEventListeners()
-
+    const canvas: HTMLCanvasElement = document.querySelector('#triangles');
+    this.initEngine();
+    this.addEventListeners();
     this.enterAnimation();
-
   }
 
   initEngine(){
     this.engine.createScene(this.rendererCanvas);
     this.engine.createTriangles(this.coords);
-    this.engine.animate()
+    this.engine.animate();
   }
 
 
   addEventListeners(){
-    window.addEventListener('scroll',() => {
-      
-      if(window.pageYOffset > 0){
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 0){
         this.exploring = false;
       }else{
         this.exploring = true;
       }
-    })
+    });
 
     window.addEventListener('keydown', event => {
-      if(event.keyCode == 32){
+      if (event.keyCode == 32){
         this.playRandom();
       }
-    })
+    });
   }
 
   enterAnimation(){
@@ -89,35 +77,30 @@ export class WelcomeComponent implements OnInit {
     this.engine.enterAcceleration = 5;
 
     setTimeout(() => {
-      if(this.mode !== 2){
+      if (this.mode !== 2){
         this.mode = 1;
-        this.engine.mode = this.mode;        
+        this.engine.mode = this.mode;
       }
-
-    },6600)
+    }, 6600);
   }
-  
+
 
   playRandom(){
     this.mode = 2;
     this.engine.mode = this.mode;
     this.engine.exitAcceleration = 1;
-    
-    
-    
-    this.settings()
+    this.settings();
 
     setTimeout(() => {
-      this.router.navigate(['/tests'])
-    },6400)
+      this.router.navigate(['/tests']);
+    }, 6400);
   }
 
   settings(){
-    const random = Math.floor(Math.random() * 6)
-    this.music.setSettings('whereAreMyFriends',random)
-    this.music.changeSong(this.music.albums.whereAreMyFriends.songs[random])
+    const random = Math.floor(Math.random() * 6);
+    this.music.setSettings('whereAreMyFriends', random);
+    this.music.changeSong(this.music.albums.whereAreMyFriends.songs[random]);
     this.music.currentSong = random;
     this.music.currentAlbum = 'whereAreMyFriends';
   }
-
 }
