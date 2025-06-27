@@ -24,34 +24,34 @@ import { MusicServiceService } from './services/music-service.service';
     BrowserModule,
     AppRoutingModule,
     RouterModule.forRoot([
-      {
+    {
         component: PlayerComponent,
         path: 'player'
-      },
-      {
+    },
+    {
         path: 'tests',
         component: PlayerMenuComponent,
         children: [
-          {
-            path: '',
-            redirectTo: 'playlist',
-            pathMatch: 'full'
-          },
-          {
-            path: 'playlist',
-            component: PlayerPlaylistComponent
-          }
+            {
+                path: '',
+                redirectTo: 'playlist',
+                pathMatch: 'full'
+            },
+            {
+                path: 'playlist',
+                component: PlayerPlaylistComponent
+            }
         ]
-      },
-      {
+    },
+    {
         path: 'welcome',
         component: WelcomeComponent
-      },
-      {
+    },
+    {
         path: '**',
         component: WelcomeComponent
-      }
-    ])
+    }
+], { relativeLinkResolution: 'legacy' })
   ],
   providers: [MusicServiceService],
   bootstrap: [AppComponent]
