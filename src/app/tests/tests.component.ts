@@ -1,25 +1,23 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { TestsEngineService } from './testsEngine.service';
-import { analyze, guess } from 'web-audio-beat-detector';
-import { MusicServiceService } from '../services/music-service.service';
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { TestsEngineService } from "./testsEngine.service";
+import { analyze, guess } from "web-audio-beat-detector";
+import { MusicServiceService } from "../services/music-service.service";
 @Component({
-  selector: 'app-tests',
-  templateUrl: './tests.component.html',
-  styleUrls: ['./tests.component.css']
+  selector: "app-tests",
+  templateUrl: "./tests.component.html",
+  styleUrls: ["./tests.component.scss"],
 })
 export class TestsComponent implements OnInit {
-
   public constructor(
     private engServ: TestsEngineService,
-    private musicService: MusicServiceService,
-    ) { }
+    private musicService: MusicServiceService
+  ) {}
 
-  @ViewChild('rendererCanvas', {static: true})
+  @ViewChild("rendererCanvas", { static: true })
   public rendererCanvas: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('audio', {static: true})
+  @ViewChild("audio", { static: true })
   public audio: ElementRef<HTMLAudioElement>;
-
 
   canvas2d: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -32,12 +30,13 @@ export class TestsComponent implements OnInit {
   bufferLength;
   audioCtx: AudioContext = new AudioContext();
   gainNode: GainNode;
-  audioSrc = 'https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus2/02-blue_dot.mp3';
+  audioSrc =
+    "https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus2/02-blue_dot.mp3";
 
   loading = true;
 
   public ngOnInit(): void {
-    this.canvas2d = document.querySelector('#renderCanvas');
+    this.canvas2d = document.querySelector("#renderCanvas");
 
     this.setSubscribtions();
 
@@ -45,12 +44,12 @@ export class TestsComponent implements OnInit {
     this.engServ.animate();
 
     this.gainNode = this.audioCtx.createGain();
-    this.audio.nativeElement.crossOrigin = 'anonymous';
+    this.audio.nativeElement.crossOrigin = "anonymous";
     this.audio.nativeElement.volume = 0.1;
     this.audioContext(this.audio.nativeElement);
   }
 
-  setSubscribtions(){
+  setSubscribtions() {
     this.musicService.changedSong.subscribe((song) => {
       console.log(song);
       this.play(song);
@@ -66,56 +65,62 @@ export class TestsComponent implements OnInit {
   }
 
   fetch(url, resolve) {
-    const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + url;
+    const combinedUrl = "https://cors-anywhere.herokuapp.com/" + url;
     const request = new XMLHttpRequest();
-    request.open('GET', combinedUrl, true);
+    request.open("GET", combinedUrl, true);
     // console.log(this.audioCtx);
     this.loading = true;
 
-    request.setRequestHeader('Access-Control-Allow-Origin', '*');
-    request.setRequestHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    request.setRequestHeader("Access-Control-Allow-Origin", "*");
     request.setRequestHeader(
-        'Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS'
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    request.setRequestHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PATCH, PUT, DELETE, OPTIONS"
     );
 
-    request.responseType = 'arraybuffer';
+    request.responseType = "arraybuffer";
     request.onload = () => {
       const audioData = request.response;
       console.log(this.audioSrc);
       console.log(audioData);
-      this.audioCtx.decodeAudioData(audioData, (buffer) => {
-        const source = this.audioCtx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(this.audioCtx.destination);
-        source.loop = false;
+      this.audioCtx.decodeAudioData(
+        audioData,
+        (buffer) => {
+          const source = this.audioCtx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(this.audioCtx.destination);
+          source.loop = false;
 
-        this.audio.nativeElement.onended = () => {
-          this.nextSong();
-        };
+          this.audio.nativeElement.onended = () => {
+            this.nextSong();
+          };
 
-        analyze(buffer)
-        .then((tempo) => {
-          console.log(tempo);
-          this.setupBeat(tempo);
-          this.engServ.playing = true;
-          this.loading = false;
-          this.audioCtx.resume();
-          this.audio.nativeElement.play();
-        });
-
-        }, this.onDecodeBufferError);
-      };
+          analyze(buffer).then((tempo) => {
+            console.log(tempo);
+            this.setupBeat(tempo);
+            this.engServ.playing = true;
+            this.loading = false;
+            this.audioCtx.resume();
+            this.audio.nativeElement.play();
+          });
+        },
+        this.onDecodeBufferError
+      );
+    };
     request.send();
   }
   onSuccess(request) {
     const audioData = request.response;
   }
   onDecodeBufferError(e) {
-    console.log('Error decoding buffer: ' + e.message);
+    console.log("Error decoding buffer: " + e.message);
   }
 
-  setupBeat(tempo){
-    this.engServ.beatTime = 1 / (tempo / 60) * 1000;
+  setupBeat(tempo) {
+    this.engServ.beatTime = (1 / (tempo / 60)) * 1000;
     console.log(this.engServ.beatTime);
     const hue = 340 / 360;
     const saturation = 100 / 100;
@@ -123,20 +128,20 @@ export class TestsComponent implements OnInit {
     this.engServ.beatColors = [
       [hue, saturation, luminosity],
       [220 / 360, saturation, luminosity],
-      [270 / 360, saturation, luminosity]
+      [270 / 360, saturation, luminosity],
     ];
     this.engServ.play();
   }
 
-  logTempo(tempo){
+  logTempo(tempo) {
     setTimeout(() => {
       this.logTempo(tempo);
-    }, 1 / (tempo / 60) * 1000);
+    }, (1 / (tempo / 60)) * 1000);
   }
-  play(song){
+  play(song) {
     this.audio.nativeElement.src = song.path;
     this.engServ.playing = false;
-    this.fetch(song.path, this.onSuccess);// https://cors-anywhere.herokuapp.com/
+    this.fetch(song.path, this.onSuccess); // https://cors-anywhere.herokuapp.com/
     /*
     const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + song.path;
     fetch(combinedUrl, {
@@ -157,26 +162,28 @@ export class TestsComponent implements OnInit {
   })
   */
   }
-  pauseAudio(){
+  pauseAudio() {
     this.engServ.playing = false;
     this.audio.nativeElement.pause();
   }
-  unpauseAudio(){
+  unpauseAudio() {
     this.audio.nativeElement.play();
-    const audioBuffer = this.audioCtx.createBuffer(2, this.audioCtx.sampleRate * 314, this.audioCtx.sampleRate);
+    const audioBuffer = this.audioCtx.createBuffer(
+      2,
+      this.audioCtx.sampleRate * 314,
+      this.audioCtx.sampleRate
+    );
 
-    analyze(audioBuffer)
-    .then((tempo) => {
+    analyze(audioBuffer).then((tempo) => {
       console.log(tempo);
     });
   }
 
-  nextSong(){
+  nextSong() {
     this.musicService.songEnd();
   }
 
-  audioContext(audioSource){
-
+  audioContext(audioSource) {
     const source = this.audioCtx.createMediaElementSource(audioSource);
     this.analyser = this.audioCtx.createAnalyser();
 
@@ -191,12 +198,11 @@ export class TestsComponent implements OnInit {
     this.animate();
   }
 
-
   animate() {
-    requestAnimationFrame(() => {this.animate(); });
+    requestAnimationFrame(() => {
+      this.animate();
+    });
     this.analyser.getByteFrequencyData(this.dataArray);
     this.engServ.getMusicData(this.dataArray);
   }
-
-
 }

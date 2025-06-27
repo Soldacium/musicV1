@@ -51,7 +51,7 @@ import { MusicServiceService } from './services/music-service.service';
         path: '**',
         component: WelcomeComponent
     }
-], { relativeLinkResolution: 'legacy' })
+], {})
   ],
   providers: [MusicServiceService],
   bootstrap: [AppComponent]
