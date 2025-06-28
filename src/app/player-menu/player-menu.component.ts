@@ -1,26 +1,32 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-player-menu",
-  templateUrl: "./player-menu.component.html",
-  styleUrls: ["./player-menu.component.scss"],
+  selector: 'app-player-menu',
+  templateUrl: './player-menu.component.html',
+  styleUrls: ['./player-menu.component.scss'],
 })
 export class PlayerMenuComponent implements OnInit {
-  more: boolean = false;
+  more = false;
 
-  constructor(public router: Router) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    window.addEventListener("mousemove", (event) => {
-      if (event.x < 120) {
-        this.more = true;
-      }
+  ngOnInit() {
+    window.addEventListener('mousemove', (event) => {
+      this.mouseMove(event);
     });
 
-    const musicMenu = document.getElementById("menu");
-    musicMenu.addEventListener("mouseleave", () => {
-      this.more = false;
-    });
+    const musicMenu = document.getElementById('menu');
+    if (musicMenu) {
+      musicMenu.addEventListener('mouseleave', () => {
+        this.more = false;
+      });
+    }
+  }
+
+  mouseMove(event: MouseEvent): void {
+    if (event.x < 120) {
+      this.more = true;
+    }
   }
 }

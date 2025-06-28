@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit } from "@angular/core";
-import { MusicServiceService } from "../../services/music-service.service";
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { MusicServiceService } from '../../services/music-service.service';
 @Component({
-  selector: "app-player-playlist",
-  templateUrl: "./player-playlist.component.html",
-  styleUrls: ["./player-playlist.component.scss"],
+  selector: 'app-player-playlist',
+  templateUrl: './player-playlist.component.html',
+  styleUrls: ['./player-playlist.component.scss'],
 })
 export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
   songs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
@@ -23,19 +23,15 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
 
     this.setSubscriptions();
     console.log(this.albumsArray);
-    this.changeAlbum("whereAreMyFriends");
+    this.changeAlbum('whereAreMyFriends');
     this.initFlow();
   }
 
   setSubscriptions() {
     this.music.nextSong.subscribe(() => {
-      console.log("event recived");
+      console.log('event recived');
       const songNum = this.currentAlbum.songs.indexOf(this.currentSong);
-      console.log(
-        songNum,
-        this.currentAlbum.songs.length,
-        this.currentAlbum.songs[songNum + 1]
-      );
+      console.log(songNum, this.currentAlbum.songs.length, this.currentAlbum.songs[songNum + 1]);
       if (songNum < this.currentAlbum.songs.length - 1) {
         this.changeSong(this.currentAlbum.songs[songNum + 1]);
       } else {
@@ -44,7 +40,7 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
     });
 
     this.music.settings.subscribe(() => {
-      console.log("hey");
+      console.log('hey');
       //this.changeAlbum(album);
       //this.changeSong(song)
     });
@@ -89,7 +85,7 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
   _prevLink = null;
   _nextLink = null;
   _albums = [];
-  _transformName = "transform";
+  _transformName = 'transform';
 
   // Constants
   OFFSET = 70; // pixels
@@ -120,31 +116,29 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
       // before
       if (i < this._index) {
         this._albums[i].style[this._transformName] =
-          "translateX( -" +
+          'translateX( -' +
           this.OFFSET * (this._index - i) +
-          "% ) rotateY( " +
+          '% ) rotateY( ' +
           this.ROTATION +
-          "deg )";
+          'deg )';
         this._albums[i].style.zIndex = this.BASE_ZINDEX + i;
       }
 
       // current
       if (i === this._index) {
-        this._albums[i].style[this._transformName] =
-          "rotateY( 0deg ) translateZ( 140px )";
+        this._albums[i].style[this._transformName] = 'rotateY( 0deg ) translateZ( 140px )';
         this._albums[i].style.zIndex = this.MAX_ZINDEX;
       }
 
       // after
       if (i > this._index) {
         this._albums[i].style[this._transformName] =
-          "translateX( " +
+          'translateX( ' +
           this.OFFSET * (i - this._index) +
-          "% ) rotateY( -" +
+          '% ) rotateY( -' +
           this.ROTATION +
-          "deg )";
-        this._albums[i].style.zIndex =
-          this.BASE_ZINDEX + (this._albums.length - i);
+          'deg )';
+        this._albums[i].style.zIndex = this.BASE_ZINDEX + (this._albums.length - i);
       }
     }
   }
@@ -194,7 +188,7 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
    * Register all events
    **/
   registerEvents() {
-    document.addEventListener("keydown", this.keyDown, false);
+    document.addEventListener('keydown', this.keyDown, false);
   }
 
   /**
@@ -202,20 +196,30 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
    **/
   initFlow() {
     // get albums & set index on the album in the middle
-    this._albums = Array.prototype.slice.call(
-      document.getElementsByClassName("album-pic")
-    );
+    this._albums = Array.prototype.slice.call(document.getElementsByClassName('album-pic'));
 
     this._index = Math.floor(this._albums.length / 2);
 
-    console.log(
-      this._index,
-      this._albums,
-      document.getElementsByClassName("album-pic")[0]
-    );
+    console.log(this._index, this._albums, document.getElementsByClassName('album-pic')[0]);
 
     // do important stuff
     this.registerEvents();
     this.render();
+  }
+
+  private getTransform(index: number, total: number): string {
+    return (
+      'translateX( -' + index * (360 / total) + '% ) rotateY( ' + index * (360 / total) + 'deg )'
+    );
+  }
+
+  private getTransformCenter(): string {
+    return 'rotateY( 0deg ) translateZ( 140px )';
+  }
+
+  private getTransformRight(index: number, total: number): string {
+    return (
+      'translateX( ' + index * (360 / total) + '% ) rotateY( -' + index * (360 / total) + 'deg )'
+    );
   }
 }

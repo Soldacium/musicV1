@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import { TestsEngineService } from "./testsEngine.service";
-import { analyze, guess } from "web-audio-beat-detector";
-import { MusicServiceService } from "../services/music-service.service";
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { TestsEngineService } from './testsEngine.service';
+import { analyze, guess } from 'web-audio-beat-detector';
+import { MusicServiceService } from '../services/music-service.service';
 @Component({
-  selector: "app-tests",
-  templateUrl: "./tests.component.html",
-  styleUrls: ["./tests.component.scss"],
+  selector: 'app-tests',
+  templateUrl: './tests.component.html',
+  styleUrls: ['./tests.component.scss'],
 })
 export class TestsComponent implements OnInit {
   public constructor(
@@ -13,10 +13,10 @@ export class TestsComponent implements OnInit {
     private musicService: MusicServiceService
   ) {}
 
-  @ViewChild("rendererCanvas", { static: true })
+  @ViewChild('rendererCanvas', { static: true })
   public rendererCanvas: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild("audio", { static: true })
+  @ViewChild('audio', { static: true })
   public audio: ElementRef<HTMLAudioElement>;
 
   canvas2d: HTMLCanvasElement;
@@ -31,12 +31,12 @@ export class TestsComponent implements OnInit {
   audioCtx: AudioContext = new AudioContext();
   gainNode: GainNode;
   audioSrc =
-    "https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus2/02-blue_dot.mp3";
+    'https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus2/02-blue_dot.mp3';
 
   loading = true;
 
   public ngOnInit(): void {
-    this.canvas2d = document.querySelector("#renderCanvas");
+    this.canvas2d = document.querySelector('#renderCanvas');
 
     this.setSubscribtions();
 
@@ -44,7 +44,7 @@ export class TestsComponent implements OnInit {
     this.engServ.animate();
 
     this.gainNode = this.audioCtx.createGain();
-    this.audio.nativeElement.crossOrigin = "anonymous";
+    this.audio.nativeElement.crossOrigin = 'anonymous';
     this.audio.nativeElement.volume = 0.1;
     this.audioContext(this.audio.nativeElement);
   }
@@ -65,23 +65,23 @@ export class TestsComponent implements OnInit {
   }
 
   fetch(url, resolve) {
-    const combinedUrl = "https://cors-anywhere.herokuapp.com/" + url;
+    const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + url;
     const request = new XMLHttpRequest();
-    request.open("GET", combinedUrl, true);
+    request.open('GET', combinedUrl, true);
     // console.log(this.audioCtx);
     this.loading = true;
 
-    request.setRequestHeader("Access-Control-Allow-Origin", "*");
+    request.setRequestHeader('Access-Control-Allow-Origin', '*');
     request.setRequestHeader(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept'
     );
     request.setRequestHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+      'Access-Control-Allow-Methods',
+      'GET, POST, PATCH, PUT, DELETE, OPTIONS'
     );
 
-    request.responseType = "arraybuffer";
+    request.responseType = 'arraybuffer';
     request.onload = () => {
       const audioData = request.response;
       console.log(this.audioSrc);
@@ -116,7 +116,7 @@ export class TestsComponent implements OnInit {
     const audioData = request.response;
   }
   onDecodeBufferError(e) {
-    console.log("Error decoding buffer: " + e.message);
+    console.log('Error decoding buffer: ' + e.message);
   }
 
   setupBeat(tempo) {
@@ -146,7 +146,7 @@ export class TestsComponent implements OnInit {
     const combinedUrl = 'https://cors-anywhere.herokuapp.com/' + song.path;
     fetch(combinedUrl, {
       credentials: 'include',
-      method: "GET",
+      method: 'GET',
       mode: 'cors',
       headers: new Headers({
         'Content-Type': 'application/json',

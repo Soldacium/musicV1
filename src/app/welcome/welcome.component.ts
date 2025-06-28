@@ -1,15 +1,15 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
-import Delaunator from "delaunator";
-import { WelcomeEngineService } from "./welcomeEngine.service";
-import { Router } from "@angular/router";
-import { MusicServiceService } from "../services/music-service.service";
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import Delaunator from 'delaunator';
+import { WelcomeEngineService } from './welcomeEngine.service';
+import { Router } from '@angular/router';
+import { MusicServiceService } from '../services/music-service.service';
 @Component({
-  selector: "app-welcome",
-  templateUrl: "./welcome.component.html",
-  styleUrls: ["./welcome.component.scss"],
+  selector: 'app-welcome',
+  templateUrl: './welcome.component.html',
+  styleUrls: ['./welcome.component.scss'],
 })
 export class WelcomeComponent implements OnInit {
-  @ViewChild("triangles", { static: true })
+  @ViewChild('triangles', { static: true })
   public rendererCanvas: ElementRef<HTMLCanvasElement>;
   exploring = true;
 
@@ -42,7 +42,7 @@ export class WelcomeComponent implements OnInit {
         this.points[triangles[i + 2]],
       ]);
     }
-    const canvas: HTMLCanvasElement = document.querySelector("#triangles");
+    const canvas: HTMLCanvasElement = document.querySelector('#triangles');
     this.initEngine();
     this.addEventListeners();
     this.enterAnimation();
@@ -55,7 +55,7 @@ export class WelcomeComponent implements OnInit {
   }
 
   addEventListeners() {
-    window.addEventListener("scroll", () => {
+    window.addEventListener('scroll', () => {
       if (window.pageYOffset > 0) {
         this.exploring = false;
       } else {
@@ -63,7 +63,7 @@ export class WelcomeComponent implements OnInit {
       }
     });
 
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
       if (event.keyCode == 32) {
         this.playRandom();
       }
@@ -90,15 +90,15 @@ export class WelcomeComponent implements OnInit {
     this.settings();
 
     setTimeout(() => {
-      this.router.navigate(["/tests"]);
+      this.router.navigate(['/tests']);
     }, 6400);
   }
 
   settings() {
     const random = Math.floor(Math.random() * 6);
-    this.music.setSettings("whereAreMyFriends", random);
+    this.music.setSettings('whereAreMyFriends', random);
     this.music.changeSong(this.music.albums.whereAreMyFriends.songs[random]);
     this.music.currentSong = random;
-    this.music.currentAlbum = "whereAreMyFriends";
+    this.music.currentAlbum = 'whereAreMyFriends';
   }
 }
