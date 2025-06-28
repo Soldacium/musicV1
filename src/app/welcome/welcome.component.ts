@@ -90,7 +90,7 @@ export class WelcomeComponent implements OnInit {
     this.settings();
 
     setTimeout(() => {
-      this.router.navigate(['/tests']);
+      this.router.navigate(['/player']);
     }, 6400);
   }
 
