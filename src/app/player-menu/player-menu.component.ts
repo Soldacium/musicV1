@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-player-menu',
-  templateUrl: './player-menu.component.html',
-  styleUrls: ['./player-menu.component.scss'],
+    selector: 'app-player-menu',
+    templateUrl: './player-menu.component.html',
+    styleUrls: ['./player-menu.component.scss'],
+    standalone: false
 })
 export class PlayerMenuComponent implements OnInit {
   more = false;

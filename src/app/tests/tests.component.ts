@@ -3,9 +3,10 @@ import { TestsEngineService } from './testsEngine.service';
 import { analyze, guess } from 'web-audio-beat-detector';
 import { MusicServiceService } from '../services/music-service.service';
 @Component({
-  selector: 'app-tests',
-  templateUrl: './tests.component.html',
-  styleUrls: ['./tests.component.scss'],
+    selector: 'app-tests',
+    templateUrl: './tests.component.html',
+    styleUrls: ['./tests.component.scss'],
+    standalone: false
 })
 export class TestsComponent implements OnInit {
   public constructor(

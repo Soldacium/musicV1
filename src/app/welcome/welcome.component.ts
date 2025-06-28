@@ -4,9 +4,10 @@ import { WelcomeEngineService } from './welcomeEngine.service';
 import { Router } from '@angular/router';
 import { MusicServiceService } from '../services/music-service.service';
 @Component({
-  selector: 'app-welcome',
-  templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.scss'],
+    selector: 'app-welcome',
+    templateUrl: './welcome.component.html',
+    styleUrls: ['./welcome.component.scss'],
+    standalone: false
 })
 export class WelcomeComponent implements OnInit {
   @ViewChild('triangles', { static: true })

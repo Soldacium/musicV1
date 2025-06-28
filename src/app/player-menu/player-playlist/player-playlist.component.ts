@@ -1,9 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { MusicServiceService } from '../../services/music-service.service';
 @Component({
-  selector: 'app-player-playlist',
-  templateUrl: './player-playlist.component.html',
-  styleUrls: ['./player-playlist.component.scss'],
+    selector: 'app-player-playlist',
+    templateUrl: './player-playlist.component.html',
+    styleUrls: ['./player-playlist.component.scss'],
+    standalone: false
 })
 export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
   songs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
