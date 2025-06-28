@@ -1,23 +1,38 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { MusicServiceService } from '../../services/music-service.service';
+import { Album, Albums, Song } from '../../models/music.interface';
+
 @Component({
-    selector: 'app-player-playlist',
-    templateUrl: './player-playlist.component.html',
-    styleUrls: ['./player-playlist.component.scss'],
-    standalone: false
+  selector: 'app-player-playlist',
+  templateUrl: './player-playlist.component.html',
+  styleUrls: ['./player-playlist.component.scss'],
+  standalone: false,
 })
 export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
-  songs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-  currentSong = 2;
-
-  albums;
-  albumsArray = [];
-  currentAlbum;
-  playing = false;
   constructor(private music: MusicServiceService) {}
+
+  songs: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  currentSong: Song | null = null;
+
+  albums: Albums;
+  albumsArray: Album[] = [];
+  currentAlbum: Album;
+  playing = false;
+
+  // Local variables
+  albumIndex = 0;
+  albumsHtml: HTMLElement[] = [];
+  transformName = 'transform';
+
+  // Constants
+  OFFSET = 70; // pixels
+  ROTATION = 45; // degrees
+  BASE_ZINDEX = 10; //
+  MAX_ZINDEX = 42; //
 
   public ngOnInit(): void {
     this.albums = this.music.getAlbums();
+    console.log(this.albums);
     Object.values(this.albums).forEach((album) => {
       this.albumsArray.push(album);
     });
@@ -28,10 +43,10 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
     this.initFlow();
   }
 
-  setSubscriptions() {
+  setSubscriptions(): void {
     this.music.nextSong.subscribe(() => {
       console.log('event recived');
-      const songNum = this.currentAlbum.songs.indexOf(this.currentSong);
+      const songNum = this.currentAlbum.songs.indexOf(this.currentSong as Song);
       console.log(songNum, this.currentAlbum.songs.length, this.currentAlbum.songs[songNum + 1]);
       if (songNum < this.currentAlbum.songs.length - 1) {
         this.changeSong(this.currentAlbum.songs[songNum + 1]);
@@ -39,67 +54,34 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
         this.changeSong(this.currentAlbum.songs[0]);
       }
     });
-
-    this.music.settings.subscribe(() => {
-      console.log('hey');
-      //this.changeAlbum(album);
-      //this.changeSong(song)
-    });
-
-    this.music.changedSong.subscribe((song) => {
-      console.log(song);
-      //this.play(song);
-    });
   }
 
   ngAfterViewInit(): void {
     this.initFlow();
   }
-  changeSong(song) {
+  changeSong(song: Song): void {
     this.currentSong = song;
-    this.music.changeSong(this.currentSong);
+    this.music.changeSong(song);
     this.playing = true;
   }
 
-  pauseSong() {
+  pauseSong(): void {
     this.music.pauseSong();
     this.playing = false;
   }
 
-  unpauseSong() {
+  unpauseSong(): void {
     this.music.unpauseSong();
     this.playing = true;
   }
 
-  changeAlbum(album) {
+  changeAlbum(album: string): void {
     this.currentAlbum = this.albums[album];
     console.log(this.currentAlbum);
   }
 
-  /**
-   * COVERFLOW EFFECT
-   */
-
-  // Local variables
-  _index = 0;
-  _coverflow = null;
-  _prevLink = null;
-  _nextLink = null;
-  _albums = [];
-  _transformName = 'transform';
-
-  // Constants
-  OFFSET = 70; // pixels
-  ROTATION = 45; // degrees
-  BASE_ZINDEX = 10; //
-  MAX_ZINDEX = 42; //
-
-  /**
-   * Get selector from the dom
-   **/
-
   clickAlbum(albumIndex: number) {
-    this._index = albumIndex;
+    this.albumIndex = albumIndex;
     this.render();
 
     this.currentAlbum = this.albumsArray[albumIndex];
@@ -108,72 +90,55 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
     return document.querySelector(selector);
   }
 
-  /**
-   * Renders the CoverFlow based on the current _index
-   **/
-  render() {
+  render(): void {
     // loop through albums & transform positions
-    for (let i = 0; i < this._albums.length; i++) {
+    for (let i = 0; i < this.albumsHtml.length; i++) {
       // before
-      if (i < this._index) {
-        this._albums[i].style[this._transformName] =
+      if (i < this.albumIndex) {
+        this.albumsHtml[i].style[this.transformName] =
           'translateX( -' +
-          this.OFFSET * (this._index - i) +
+          this.OFFSET * (this.albumIndex - i) +
           '% ) rotateY( ' +
           this.ROTATION +
           'deg )';
-        this._albums[i].style.zIndex = this.BASE_ZINDEX + i;
+        this.albumsHtml[i].style.zIndex = String(this.BASE_ZINDEX + i);
       }
 
       // current
-      if (i === this._index) {
-        this._albums[i].style[this._transformName] = 'rotateY( 0deg ) translateZ( 140px )';
-        this._albums[i].style.zIndex = this.MAX_ZINDEX;
+      if (i === this.albumIndex) {
+        this.albumsHtml[i].style[this.transformName] = 'rotateY( 0deg ) translateZ( 140px )';
+        this.albumsHtml[i].style.zIndex = String(this.MAX_ZINDEX);
       }
 
       // after
-      if (i > this._index) {
-        this._albums[i].style[this._transformName] =
+      if (i > this.albumIndex) {
+        this.albumsHtml[i].style[this.transformName] =
           'translateX( ' +
-          this.OFFSET * (i - this._index) +
+          this.OFFSET * (i - this.albumIndex) +
           '% ) rotateY( -' +
           this.ROTATION +
           'deg )';
-        this._albums[i].style.zIndex = this.BASE_ZINDEX + (this._albums.length - i);
+        this.albumsHtml[i].style.zIndex = String(this.BASE_ZINDEX + (this.albumsHtml.length - i));
       }
     }
   }
 
-  /**
-   * Flow to the right
-   **/
-  flowRight() {
-    // check if has albums
-    // on the right side
-
-    if (this._albums.length > this._index + 1) {
-      this._index++;
+  flowRight(): void {
+    if (this.albumsHtml.length > this.albumIndex + 1) {
+      this.albumIndex++;
       this.render();
     }
-    this.currentAlbum = this.albumsArray[this._index];
+    this.currentAlbum = this.albumsArray[this.albumIndex];
   }
 
-  /**
-   * Flow to the left
-   **/
   flowLeft() {
-    // check if has albums
-    // on the left side
-    if (this._index) {
-      this._index--;
+    if (this.albumIndex) {
+      this.albumIndex--;
       this.render();
     }
-    this.currentAlbum = this.albumsArray[this._index];
+    this.currentAlbum = this.albumsArray[this.albumIndex];
   }
 
-  /**
-   * Enable left & right keyboard events
-   **/
   keyDown(event) {
     switch (event.keyCode) {
       case 37:
@@ -185,25 +150,14 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /**
-   * Register all events
-   **/
   registerEvents() {
     document.addEventListener('keydown', this.keyDown, false);
   }
 
-  /**
-   * Initalize
-   **/
   initFlow() {
-    // get albums & set index on the album in the middle
-    this._albums = Array.prototype.slice.call(document.getElementsByClassName('album-pic'));
+    this.albumsHtml = Array.prototype.slice.call(document.getElementsByClassName('album-pic'));
+    this.albumIndex = Math.floor(this.albumsHtml.length / 2);
 
-    this._index = Math.floor(this._albums.length / 2);
-
-    console.log(this._index, this._albums, document.getElementsByClassName('album-pic')[0]);
-
-    // do important stuff
     this.registerEvents();
     this.render();
   }

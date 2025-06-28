@@ -1,15 +1,117 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
-*{
-    box-sizing: border-box;
+// Global CSS Variables for themes
+:root {
+  --theme-primary: #ffffff;
+  --theme-secondary: #cccccc;
+  --theme-background: #000000;
+  --theme-foreground: #ffffff;
+  --theme-accent: #666666;
+  --theme-wireframe: rgb(212, 212, 212);
 }
 
-body{
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    width: 100%;
-    font-family: 'Lato', sans-serif;
-    overflow-x: hidden;
+// Base theme styles
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--theme-background);
+  color: var(--theme-foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow: hidden;
+}
+
+// Theme-specific body classes
+body.theme-dark {
+  --theme-primary: #ffffff;
+  --theme-secondary: #cccccc;
+  --theme-background: #000000;
+  --theme-foreground: #ffffff;
+  --theme-accent: #666666;
+  --theme-wireframe: rgb(212, 212, 212);
+}
+
+body.theme-light {
+  --theme-primary: #000000;
+  --theme-secondary: #333333;
+  --theme-background: #ffffff;
+  --theme-foreground: #000000;
+  --theme-accent: #999999;
+  --theme-wireframe: rgb(43, 43, 43);
+}
+
+body.theme-color {
+  // Color variables will be set dynamically by ThemeService
+  background-color: var(--theme-background);
+}
+
+// Player wrapper styles
+.player-wrap {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-color: var(--theme-background);
+  transition: background-color 0.3s ease;
+}
+
+// Canvas styles
+canvas {
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+// Global scrollbar theming
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-accent);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-primary);
+}
+
+// Light theme scrollbar
+body.theme-light {
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Smooth transitions for all theme changes
+* {
+  transition-property: background-color, color, border-color, opacity;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+// Animation performance optimization
+canvas,
+.player-wrap {
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  font-family: 'Lato', sans-serif;
+  overflow-x: hidden;
 }

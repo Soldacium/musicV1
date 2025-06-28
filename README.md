@@ -25,3 +25,12 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## todo
+
+implement multiple colors + color theme
+fix bad routing
+enable playing own music (drag & drop)
+better source of music (not github)
+optimize welcome animation
+clean up types, set up shared folder

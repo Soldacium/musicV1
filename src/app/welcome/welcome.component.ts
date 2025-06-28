@@ -4,10 +4,10 @@ import { WelcomeEngineService } from './welcomeEngine.service';
 import { Router } from '@angular/router';
 import { MusicServiceService } from '../services/music-service.service';
 @Component({
-    selector: 'app-welcome',
-    templateUrl: './welcome.component.html',
-    styleUrls: ['./welcome.component.scss'],
-    standalone: false
+  selector: 'app-welcome',
+  templateUrl: './welcome.component.html',
+  styleUrls: ['./welcome.component.scss'],
+  standalone: false,
 })
 export class WelcomeComponent implements OnInit {
   @ViewChild('triangles', { static: true })
@@ -17,8 +17,8 @@ export class WelcomeComponent implements OnInit {
   height = window.innerHeight;
   width = window.innerWidth;
   pointsNum = 400;
-  points = [];
-  coords = [];
+  points: number[][] = [];
+  coords: number[][][] = [];
   mode = 1;
 
   constructor(
@@ -43,7 +43,6 @@ export class WelcomeComponent implements OnInit {
         this.points[triangles[i + 2]],
       ]);
     }
-    const canvas: HTMLCanvasElement = document.querySelector('#triangles');
     this.initEngine();
     this.addEventListeners();
     this.enterAnimation();
@@ -65,7 +64,7 @@ export class WelcomeComponent implements OnInit {
     });
 
     window.addEventListener('keydown', (event) => {
-      if (event.keyCode == 32) {
+      if (event.keyCode === 32) {
         this.playRandom();
       }
     });

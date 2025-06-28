@@ -1,0 +1,30 @@
+<div class="theme-switcher">
+  <button
+    class="theme-button"
+    (click)="toggleDropdown()"
+    [attr.aria-expanded]="isOpen"
+    aria-haspopup="true"
+    title="Change theme"
+  >
+    <span class="theme-icon">{{ getThemeIcon(currentTheme) }}</span>
+    <span class="theme-label">{{ getThemeLabel(currentTheme) }}</span>
+    <span class="dropdown-arrow" [class.open]="isOpen">▼</span>
+  </button>
+
+  <div class="theme-dropdown" [class.show]="isOpen">
+    <button
+      *ngFor="let theme of ['dark', 'light', 'color']"
+      class="theme-option"
+      [class.active]="currentTheme === theme"
+      (click)="selectTheme(theme)"
+      [attr.aria-selected]="currentTheme === theme"
+    >
+      <span class="option-icon">{{ getThemeIcon(theme) }}</span>
+      <span class="option-label">{{ getThemeLabel(theme) }}</span>
+      <span class="checkmark" *ngIf="currentTheme === theme">✓</span>
+    </button>
+  </div>
+
+  <!-- Backdrop to close dropdown when clicking outside -->
+  <div class="backdrop" [class.show]="isOpen" (click)="toggleDropdown()"></div>
+</div>
