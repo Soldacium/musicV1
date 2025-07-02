@@ -34,3 +34,5 @@ enable playing own music (drag & drop)
 better source of music (not github)
 optimize welcome animation
 clean up types, set up shared folder
+redo the todo, provide overview, better instructions
+build for github hosting
