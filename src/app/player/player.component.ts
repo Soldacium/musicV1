@@ -95,11 +95,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
       // Start the visualization engine to begin audio analysis
       this.playerEngine.startPlaying();
-      console.log('Started playing visualization');
 
       this.loading = false;
     } catch (error) {
-      console.error('Error playing audio:', error);
       this.loading = false;
       this.handlePlaybackFallback(song);
     }
@@ -110,15 +108,12 @@ export class PlayerComponent implements OnInit, OnDestroy {
       this.audioService.setupAudioElement(this.audio.nativeElement, song);
       await this.audio.nativeElement.play();
       this.playerEngine.startPlaying();
-    } catch (fallbackError) {
-      console.error('Fallback audio play failed:', fallbackError);
-    }
+    } catch (fallbackError) {}
   }
 
   pauseAudio(): void {
     this.playerEngine.stopPlaying();
     this.audio.nativeElement.pause();
-    console.log('Paused visualization');
   }
 
   async unpauseAudio(): Promise<void> {
@@ -126,10 +121,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
       await this.audioService.resumeAudioContext();
       await this.audio.nativeElement.play();
       this.playerEngine.startPlaying();
-      console.log('Resumed visualization');
-    } catch (error) {
-      console.error('Error unpausing audio:', error);
-    }
+    } catch (error) {}
   }
 
   nextSong(): void {
@@ -157,16 +149,13 @@ export class PlayerComponent implements OnInit, OnDestroy {
   private loadSong(song: Song): void {
     this.currentSong = song;
     this.currentAlbum = this.findAlbumBySong(song);
-    console.log('Loading song:', song, 'from album:', this.currentAlbum);
 
-    // Update theme colors based on album when in color mode
     if (this.currentAlbum && this.themeService.getCurrentTheme() === 'color') {
       this.themeService.setAlbumColors(this.currentAlbum);
     }
   }
 
   private setupMusicServiceSubscriptions(): void {
-    // Subscribe to theme changes to update colors when switching to color mode
     this.themeService.currentTheme$.pipe(takeUntil(this.destroy$)).subscribe((theme) => {
       if (theme === 'color' && this.currentAlbum) {
         this.themeService.setAlbumColors(this.currentAlbum);

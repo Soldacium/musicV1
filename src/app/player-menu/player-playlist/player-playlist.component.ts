@@ -32,22 +32,18 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
 
   public ngOnInit(): void {
     this.albums = this.music.getAlbums();
-    console.log(this.albums);
     Object.values(this.albums).forEach((album) => {
       this.albumsArray.push(album);
     });
 
     this.setSubscriptions();
-    console.log(this.albumsArray);
     this.changeAlbum('whereAreMyFriends');
     this.initFlow();
   }
 
   setSubscriptions(): void {
     this.music.nextSong.subscribe(() => {
-      console.log('event recived');
       const songNum = this.currentAlbum.songs.indexOf(this.currentSong as Song);
-      console.log(songNum, this.currentAlbum.songs.length, this.currentAlbum.songs[songNum + 1]);
       if (songNum < this.currentAlbum.songs.length - 1) {
         this.changeSong(this.currentAlbum.songs[songNum + 1]);
       } else {
@@ -77,7 +73,6 @@ export class PlayerPlaylistComponent implements OnInit, AfterViewInit {
 
   changeAlbum(album: string): void {
     this.currentAlbum = this.albums[album];
-    console.log(this.currentAlbum);
   }
 
   clickAlbum(albumIndex: number) {

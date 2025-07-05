@@ -28,8 +28,6 @@ export class ThemeService {
   constructor() {
     this.loadSavedTheme();
     this.applyThemeToDocument();
-    console.log('ThemeService initialized with theme:', this.getCurrentTheme());
-    console.log('Initial colors:', this.getCurrentColors());
   }
 
   private loadSavedTheme(): void {
@@ -100,9 +98,9 @@ export class ThemeService {
       wireframe: 'rgb(212,212,212)',
       particleColors: ['#ffffff', '#cccccc', '#999999'],
       triangleColors: [
-        [0, 0, 1], // white
-        [0, 0, 0.8], // light gray
-        [0, 0, 0.6], // darker gray
+        [0, 0, 0], // black
+        [0, 0, 0.2], // dark gray
+        [0, 0, 0.4], // medium gray
       ],
     };
   }
@@ -117,9 +115,9 @@ export class ThemeService {
       wireframe: 'rgb(43,43,43)',
       particleColors: ['#000000', '#333333', '#666666'],
       triangleColors: [
-        [0, 0, 0], // black
-        [0, 0, 0.2], // dark gray
-        [0, 0, 0.4], // medium gray
+        [0, 0, 1], // white
+        [0, 0, 0.8], // light gray
+        [0, 0, 0.6], // darker gray
       ],
     };
   }
@@ -130,12 +128,16 @@ export class ThemeService {
     return {
       primary: dominantColors[0] || '#ffffff',
       secondary: dominantColors[1] || '#cccccc',
-      background: '#000000', // Keep dark background for contrast
-      foreground: '#ffffff',
+      background: '#ffffff',
+      foreground: '#000000',
       accent: dominantColors[2] || '#666666',
       wireframe: dominantColors[0] || 'rgb(212,212,212)',
       particleColors: dominantColors.slice(0, 3),
-      triangleColors: hslColors.slice(0, 3).map((hsl) => [hsl.h / 360, hsl.s / 100, hsl.l / 100]),
+      triangleColors: [
+        [0, 0, 1], // white
+        [0, 0, 0.8], // light gray
+        [0, 0, 0.6], // darker gray
+      ],
     };
   }
 

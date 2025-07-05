@@ -5,14 +5,12 @@ import { analyze } from 'web-audio-beat-detector';
 import { ThemeService, ThemeColors } from '../services/theme.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-// tslint: disable
+
 @Injectable({ providedIn: 'root' })
 export class PlayerEngineService implements OnDestroy {
-  private canvas: HTMLCanvasElement;
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
   private scene: THREE.Scene;
-  private light: THREE.AmbientLight;
 
   private frameId: number | null = null;
 
@@ -45,6 +43,7 @@ export class PlayerEngineService implements OnDestroy {
     THREE.Mesh,
     {
       color: number[];
+      baseColor: number[];
       startTime: number;
       duration: number;
       maxIntensity: number;
@@ -98,12 +97,10 @@ export class PlayerEngineService implements OnDestroy {
 
   private setupThemeSubscription(): void {
     this.currentThemeColors = this.themeService.getCurrentColors();
-    console.log('Initial theme colors:', this.currentThemeColors);
 
     this.themeService.currentColors$
       .pipe(takeUntil(this.destroy$))
       .subscribe((colors: ThemeColors) => {
-        console.log('Theme colors changed:', colors);
         this.currentThemeColors = colors;
         this.updateVisualizationColors();
       });
@@ -131,11 +128,9 @@ export class PlayerEngineService implements OnDestroy {
     }
 
     this.updateParticleColors();
-
     this.updateWireframeColors();
-
+    this.updateTriangleColors();
     this.updateBallColors();
-
     this.beatColors = this.currentThemeColors.triangleColors;
     if (this.scene) {
       this.scene.background = new THREE.Color(this.currentThemeColors.background);
@@ -150,7 +145,6 @@ export class PlayerEngineService implements OnDestroy {
           this.currentThemeColors.particleColors[0] || '#ffffff'
         );
         highMaterial.needsUpdate = true;
-        console.log('Updated high particles color to:', this.currentThemeColors.particleColors[0]);
       }
 
       const lowMaterial = this.particlesL.material as THREE.ShaderMaterial;
@@ -159,7 +153,6 @@ export class PlayerEngineService implements OnDestroy {
           this.currentThemeColors.particleColors[1] || '#cccccc'
         );
         lowMaterial.needsUpdate = true;
-        console.log('Updated low particles color to:', this.currentThemeColors.particleColors[1]);
       }
     }
   }
@@ -178,7 +171,24 @@ export class PlayerEngineService implements OnDestroy {
           }
         }
       });
-      console.log('Updated wireframe colors to:', this.currentThemeColors.wireframe);
+    }
+  }
+
+  private updateTriangleColors(): void {
+    if (this.triangles && this.currentThemeColors) {
+      const triangleColor = this.currentThemeColors.triangleColors?.[0] || [0, 0, 0];
+      this.triangles.forEach((triangle) => {
+        const triangleMaterial = triangle.material as THREE.MeshBasicMaterial;
+        if (triangleMaterial && triangleMaterial.color) {
+          triangleMaterial.color.setHSL(triangleColor[0], triangleColor[1], triangleColor[2]);
+          triangleMaterial.needsUpdate = true;
+        }
+      });
+
+      // Update base colors for currently animating triangles
+      this.animatingTriangles.forEach((animation, triangle) => {
+        animation.baseColor = triangleColor;
+      });
     }
   }
 
@@ -203,11 +213,23 @@ export class PlayerEngineService implements OnDestroy {
   public createScene(canvas: ElementRef<HTMLCanvasElement>): void {}
 
   init(canvas: HTMLCanvasElement): void {
-    console.log('Initializing player engine...');
+    this.setupCamera();
+    this.setupScene();
+    this.setupObjects();
+    this.setupRenderer(canvas);
+    this.addEventListeners();
+    setTimeout(() => {
+      this.updateVisualizationColors();
+    }, 100);
+  }
+
+  setupCamera(): void {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 15000);
     this.camera.position.z = 1000;
     this.camera.position.y = 200;
+  }
 
+  setupScene(): void {
     this.scene = new THREE.Scene();
 
     this.particlesH = this.makeOrbit(this.RADIUS, this.LINES, this.DOTS, this.SPREAD, 1, 0);
@@ -216,21 +238,19 @@ export class PlayerEngineService implements OnDestroy {
     const radiusLower = this.RADIUS - this.DOTS * this.SPREAD - 80;
     this.particlesL = this.makeOrbit(radiusLower, this.LINES, this.DOTS, this.SPREAD, 1, 1);
     this.scene.add(this.particlesL);
+  }
 
+  setupRenderer(canvas: HTMLCanvasElement): void {
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  setupObjects(): void {
     this.ballOuter = this.makeBall(this.RADIUS * 6, 1, 0, 0, 0, true);
     this.ballInner = this.makeBall(this.RADIUS / 3, 2, 0, 0, 0, true);
 
     this.triangles = this.makeFracture(100, 6000, 6000, this.triangleDepth1, 90);
-
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-    this.addEventListeners();
-
-    setTimeout(() => {
-      this.updateVisualizationColors();
-    }, 100);
   }
 
   addEventListeners() {
@@ -338,8 +358,10 @@ export class PlayerEngineService implements OnDestroy {
         geometry.vertices.push(new THREE.Vector3(point[0], point[1], 0));
       });
 
+      // Use theme triangle colors - default to first color or black if not available
+      const triangleColor = this.currentThemeColors?.triangleColors?.[0] || [0, 0, 0];
       const material = new THREE.MeshBasicMaterial({
-        color: 'black',
+        color: new THREE.Color().setHSL(triangleColor[0], triangleColor[1], triangleColor[2]),
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
@@ -452,8 +474,10 @@ export class PlayerEngineService implements OnDestroy {
 
   animateColor(triangle: THREE.Mesh, color: Array<number>, maxIntensity: number) {
     const duration = Math.max(1000, this.beatTime * 1.5);
+    const baseTriangleColor = this.currentThemeColors?.triangleColors?.[0] || [0, 0, 0];
     this.animatingTriangles.set(triangle, {
       color,
+      baseColor: baseTriangleColor,
       startTime: performance.now(),
       duration,
       maxIntensity,
@@ -469,17 +493,41 @@ export class PlayerEngineService implements OnDestroy {
       const progress = Math.min(elapsed / animation.duration, 1);
 
       if (progress >= 1) {
-        (triangle.material as THREE.MeshBasicMaterial).color.setHSL(0, 0, 0);
+        // Reset to theme's base triangle color
+        (triangle.material as THREE.MeshBasicMaterial).color.setHSL(
+          animation.baseColor[0],
+          animation.baseColor[1],
+          animation.baseColor[2]
+        );
         toRemove.push(triangle);
       } else {
-        const easedProgress = 1 - (1 - progress) * (1 - progress);
-        const intensity = 1 - easedProgress;
+        // Create a light-up then fade-out effect: quick light-up, gradual fade
+        const lightUpDuration = 0.2; // 20% of animation for light-up
+        let blendFactor: number;
 
-        const hue = animation.color[0] || 0;
-        const saturation = animation.color[1] || 1;
-        const lightness = (animation.color[2] || 0.5) * intensity;
+        if (progress <= lightUpDuration) {
+          // Quick light-up phase
+          blendFactor = progress / lightUpDuration;
+        } else {
+          // Gradual fade-out phase
+          const fadeProgress = (progress - lightUpDuration) / (1 - lightUpDuration);
+          blendFactor = 1 - fadeProgress;
+        }
 
-        (triangle.material as THREE.MeshBasicMaterial).color.setHSL(hue, saturation, lightness);
+        // Blend between base color and beat color
+        const baseHue = animation.baseColor[0] ?? 0;
+        const baseSat = animation.baseColor[1] ?? 0;
+        const baseLight = animation.baseColor[2] ?? 0;
+
+        const beatHue = animation.color[0] ?? 0;
+        const beatSat = animation.color[1] ?? 1;
+        const beatLight = animation.color[2] ?? 0.5;
+
+        const finalHue = baseHue + (beatHue - baseHue) * blendFactor;
+        const finalSat = baseSat + (beatSat - baseSat) * blendFactor;
+        const finalLight = baseLight + (beatLight - baseLight) * blendFactor;
+
+        (triangle.material as THREE.MeshBasicMaterial).color.setHSL(finalHue, finalSat, finalLight);
       }
     });
 
@@ -500,6 +548,7 @@ export class PlayerEngineService implements OnDestroy {
           const randomIndex = Math.floor(Math.random() * availableTriangles.length);
           const triangle = availableTriangles.splice(randomIndex, 1)[0]; // Remove from available list
           const color = this.beatColors[Math.floor(Math.random() * this.beatColors.length)];
+
           this.animateColor(triangle, color, 360);
         }
         this.detectBeats();
@@ -521,7 +570,6 @@ export class PlayerEngineService implements OnDestroy {
       this.render();
     });
 
-    // console.log(posX, posY)
     this.camera.position.x += (this.mouseX - this.camera.position.x) * 0.01;
     this.camera.position.y += (-(this.mouseY * 2) + 20 - this.camera.position.y) * 0.01;
     this.camera.position.z += (-(this.mouseY * 2.3) + 300 - this.camera.position.z) * 0.01;
@@ -570,15 +618,7 @@ export class PlayerEngineService implements OnDestroy {
       this.analyser.smoothingTimeConstant = 0.8;
       this.bufferLength = this.analyser.frequencyBinCount;
       this.dataArray = new Uint8Array(this.bufferLength);
-
-      console.log('Audio context set up successfully:', {
-        fftSize: this.analyser.fftSize,
-        bufferLength: this.bufferLength,
-        sampleRate: this.audioCtx.sampleRate,
-      });
-    } catch (error) {
-      console.error('Failed to setup audio context:', error);
-    }
+    } catch (error) {}
   }
 
   private startVisualizationLoop(): void {
@@ -590,22 +630,6 @@ export class PlayerEngineService implements OnDestroy {
       }
     };
     updateVisualization();
-  }
-
-  async analyzeTempo(audioBuffer: AudioBuffer): Promise<number> {
-    return await analyze(audioBuffer);
-  }
-
-  setupBeat(tempo: number): void {
-    this.beatTime = (1 / (tempo / 60)) * 1000;
-    const hue = 340 / 360;
-    const saturation = 100 / 100;
-    const luminosity = 50 / 100;
-    this.beatColors = [
-      [hue, saturation, luminosity],
-      [220 / 360, saturation, luminosity],
-      [270 / 360, saturation, luminosity],
-    ];
   }
 
   startPlaying(): void {

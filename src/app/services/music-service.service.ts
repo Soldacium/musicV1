@@ -145,7 +145,6 @@ export class MusicServiceService {
   }
 
   songEnd(): void {
-    console.log('songEnded');
     this.nextSong.emit();
   }
 

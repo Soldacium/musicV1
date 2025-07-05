@@ -11,7 +11,6 @@ import { ThemeService, ThemeMode } from '../../services/theme.service';
 })
 export class ThemeSwitcherComponent implements OnInit, OnDestroy {
   currentTheme: ThemeMode = 'dark';
-  isOpen = false;
   private destroy$ = new Subject<void>();
 
   constructor(private themeService: ThemeService) {}
@@ -27,13 +26,8 @@ export class ThemeSwitcherComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  toggleDropdown(): void {
-    this.isOpen = !this.isOpen;
-  }
-
   selectTheme(theme: ThemeMode): void {
     this.themeService.setTheme(theme);
-    this.isOpen = false;
   }
 
   getThemeLabel(theme: ThemeMode): string {
@@ -50,15 +44,16 @@ export class ThemeSwitcherComponent implements OnInit, OnDestroy {
   }
 
   getThemeIcon(theme: ThemeMode): string {
+    const isActive = this.currentTheme === theme;
     switch (theme) {
       case 'dark':
-        return '🌙';
+        return isActive ? 'fas fa-moon' : 'far fa-moon';
       case 'light':
-        return '☀️';
+        return isActive ? 'fas fa-sun' : 'far fa-sun';
       case 'color':
-        return '🎨';
+        return isActive ? 'fa-solid fa-palette' : 'fa-solid fa-palette';
       default:
-        return '🌙';
+        return isActive ? 'fas fa-moon' : 'far fa-moon';
     }
   }
 }

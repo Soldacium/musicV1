@@ -1,31 +1,27 @@
+<main>
+  <canvas id="canvas2d"></canvas>
 
-<main >
-    <canvas id='canvas2d'></canvas>
-    <!--
-    <div class="file-wrap">
-        <input type="file" id="thefile" accept="audio/*" (change)='playAudio(file.files)' #file/>        
-    </div>        
-    -->
+  <div class="loading" [ngClass]="loading ? 'visible' : 'naah'">
+    <div class="tri invert"></div>
+    <div class="tri invert"></div>
+    <div class="tri"></div>
+    <div class="tri invert"></div>
+    <div class="tri invert"></div>
+    <div class="tri"></div>
+    <div class="tri invert"></div>
+    <div class="tri"></div>
+    <div class="tri invert"></div>
+  </div>
 
-    <div class='loading' [ngClass]='loading?"visible":"naah"'>
-        <div class='tri invert'></div>
-        <div class='tri invert'></div>
-        <div class='tri'></div>
-        <div class='tri invert'></div>
-        <div class='tri invert'></div>
-        <div class='tri'></div>
-        <div class='tri invert'></div>
-        <div class='tri'></div>
-        <div class='tri invert'></div>
-      </div>
-
-    <div class="audio-wrap">
-        <audio id="audio" controls #audio src='https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus2/02-blue_dot.mp3'></audio>
-    </div>
-    <div class="engine-wrapper">
-        <canvas #rendererCanvas id="renderCanvas"></canvas>
-    </div>    
+  <div class="audio-wrap">
+    <audio
+      id="audio"
+      controls
+      #audio
+      src="https://raw.githubusercontent.com/Soldacium/musicmusic/master/circus2/02-blue_dot.mp3"
+    ></audio>
+  </div>
+  <div class="engine-wrapper">
+    <canvas #rendererCanvas id="renderCanvas"></canvas>
+  </div>
 </main>
-
-
-
