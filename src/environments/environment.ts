@@ -3,7 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  musicHost: 'https://pub-076afcd4cf1f4835b1e30a6be0bb265f.r2.dev', // Use proxy in development to avoid CORS issues
 };
 
 /*

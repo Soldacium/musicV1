@@ -7,5 +7,19 @@
     "pathRewrite": {
       "^/api": ""
     }
+  },
+  "/music/*": {
+    "target": "https://pub-076afcd4cf1f4835b1e30a6be0bb265f.r2.dev",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/music": ""
+    },
+    "headers": {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    }
   }
 }

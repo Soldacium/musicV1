@@ -1,51 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { Song } from '../models/music.interface';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AudioService {
   private audioContext: AudioContext;
-  private corsProxyUrl = 'https://api.allorigins.win/raw?url=';
 
   constructor() {
     this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   }
 
   /**
-   * Load audio file with CORS proxy support
+   * Load audio file
    */
-  loadAudioWithCORS(url: string): Observable<ArrayBuffer> {
-    return from(this.fetchWithCORS(url));
+  loadAudio(url: string): Observable<ArrayBuffer> {
+    return from(this.fetchAudio(url));
   }
 
   /**
-   * Fetch audio data using CORS proxy
+   * Fetch audio data
    */
-  private async fetchWithCORS(url: string): Promise<ArrayBuffer> {
+  private async fetchAudio(url: string): Promise<ArrayBuffer> {
     try {
-      // First try direct fetch (for local files or CORS-enabled servers)
-      const directResponse = await fetch(url, {
+      const response = await fetch(url, {
         mode: 'cors',
         credentials: 'omit',
-      });
-
-      if (directResponse.ok) {
-        return await directResponse.arrayBuffer();
-      }
-    } catch (error) {
-      console.log('Direct fetch failed, trying with CORS proxy...');
-    }
-
-    // If direct fetch fails, use CORS proxy
-    try {
-      const proxyUrl = this.corsProxyUrl + encodeURIComponent(url);
-      const response = await fetch(proxyUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/octet-stream',
-        },
       });
 
       if (!response.ok) {
@@ -54,7 +36,7 @@ export class AudioService {
 
       return await response.arrayBuffer();
     } catch (error) {
-      console.error('Failed to load audio with CORS proxy:', error);
+      console.error('Failed to load audio:', error);
       throw new Error(`Failed to load audio from ${url}: ${error.message}`);
     }
   }
@@ -71,7 +53,7 @@ export class AudioService {
    */
   async loadAndDecodeAudio(song: Song): Promise<AudioBuffer> {
     try {
-      const arrayBuffer = await this.fetchWithCORS(song.path);
+      const arrayBuffer = await this.fetchAudio(song.path);
       return await this.decodeAudioData(arrayBuffer);
     } catch (error) {
       console.error(`Failed to load and decode audio for song "${song.name}":`, error);
@@ -96,16 +78,10 @@ export class AudioService {
   }
 
   /**
-   * Set up audio element with CORS
+   * Set up audio element
    */
   setupAudioElement(audioElement: HTMLAudioElement, song: Song): void {
     audioElement.crossOrigin = 'anonymous';
     audioElement.src = song.path;
-
-    // Handle CORS errors by falling back to proxy
-    audioElement.addEventListener('error', (event) => {
-      console.warn('Audio element failed to load, trying with proxy...');
-      audioElement.src = this.corsProxyUrl + encodeURIComponent(song.path);
-    });
   }
 }
