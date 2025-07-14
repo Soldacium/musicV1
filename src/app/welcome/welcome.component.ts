@@ -1,25 +1,23 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import Delaunator from 'delaunator';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { WelcomeEngineService } from './welcomeEngine.service';
 import { Router } from '@angular/router';
 import { MusicServiceService } from '../services/music-service.service';
+
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss'],
   standalone: false,
 })
-export class WelcomeComponent implements OnInit {
+export class WelcomeComponent implements OnInit, OnDestroy {
   @ViewChild('triangles', { static: true })
   public rendererCanvas: ElementRef<HTMLCanvasElement>;
   exploring = true;
-
-  height = window.innerHeight;
-  width = window.innerWidth;
-  pointsNum = 400;
-  points: number[][] = [];
-  coords: number[][][] = [];
   mode = 1;
+
+  // Event listeners for cleanup
+  private scrollListener: (() => void) | null = null;
+  private keydownListener: ((event: KeyboardEvent) => void) | null = null;
 
   constructor(
     private engine: WelcomeEngineService,
@@ -28,70 +26,64 @@ export class WelcomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    for (let i = 0; i < this.pointsNum; i++) {
-      const x = Math.floor(Math.random() * this.width);
-      const y = Math.floor(Math.random() * this.height);
-      this.points.push([x, y]);
-    }
-    const delaunay = Delaunator.from(this.points);
-    const triangles = delaunay.triangles;
-
-    for (let i = 0; i < triangles.length; i += 3) {
-      this.coords.push([
-        this.points[triangles[i]],
-        this.points[triangles[i + 1]],
-        this.points[triangles[i + 2]],
-      ]);
-    }
-    this.initEngine();
+    this.engine.initializeEngine(this.rendererCanvas);
     this.addEventListeners();
-    this.enterAnimation();
+    this.startWelcomeAnimation();
   }
 
-  initEngine() {
-    this.engine.createScene(this.rendererCanvas);
-    this.engine.createTriangles(this.coords);
-    this.engine.animate();
+  ngOnDestroy(): void {
+    this.cleanup();
+  }
+
+  private cleanup(): void {
+    // Remove event listeners
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener);
+      this.scrollListener = null;
+    }
+
+    if (this.keydownListener) {
+      window.removeEventListener('keydown', this.keydownListener);
+      this.keydownListener = null;
+    }
   }
 
   addEventListeners() {
-    window.addEventListener('scroll', () => {
+    this.scrollListener = () => {
       if (window.pageYOffset > 0) {
         this.exploring = false;
       } else {
         this.exploring = true;
       }
-    });
+    };
+    window.addEventListener('scroll', this.scrollListener);
 
-    window.addEventListener('keydown', (event) => {
+    this.keydownListener = (event) => {
       if (event.keyCode === 32) {
         this.playRandom();
       }
-    });
+    };
+    window.addEventListener('keydown', this.keydownListener);
   }
 
-  enterAnimation() {
-    this.mode = 0;
-    this.engine.mode = this.mode;
-    this.engine.enterAcceleration = 5;
+  async startWelcomeAnimation() {
+    // Start with enter animation
+    await this.engine.animateEnterAsync();
 
-    setTimeout(() => {
-      if (this.mode !== 2) {
-        this.mode = 1;
-        this.engine.mode = this.mode;
-      }
-    }, 6600);
+    // Once enter animation is complete, switch to continuous triangle animation
+    this.mode = 1;
+    this.engine.startTriangleAnimation();
   }
 
-  playRandom() {
-    this.mode = 2;
-    this.engine.mode = this.mode;
-    this.engine.exitAcceleration = 1;
+  async playRandom() {
+    // Start exit animation
     this.settings();
-
-    setTimeout(() => {
+    this.mode = 2;
+    this.engine.animateExitAsync().then(() => {
       this.router.navigate(['/player']);
-    }, 6400);
+    });
+
+    // Once exit animation is complete, navigate to player
   }
 
   settings() {

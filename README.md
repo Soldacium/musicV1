@@ -31,9 +31,11 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 implement multiple colors + color theme // done
 fix bad routing // done
 enable playing own music (drag & drop)
-better source of music (not github)
+better source of music (not github) // done
 optimize welcome animation
 clean up types, set up shared folder
 redo the todo, provide overview, better instructions
 build for github hosting
 upgrade seo
+add player functionality, so the track can be tracked
+better side menu
