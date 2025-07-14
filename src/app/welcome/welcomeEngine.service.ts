@@ -181,7 +181,7 @@ export class WelcomeEngineService implements OnDestroy {
   animateTriangles() {
     const time = this.state.time;
     for (let i = 0; i < this.triangles.length; i++) {
-      this.triangles[i].position.z = Math.sin(i + time) * 3;
+      this.triangles[i].position.z = Math.sin((i + time) * 0.3) * 4;
     }
     this.state.time += 0.02;
   }
