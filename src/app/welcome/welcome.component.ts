@@ -88,9 +88,6 @@ export class WelcomeComponent implements OnInit, OnDestroy {
 
   settings() {
     const random = Math.floor(Math.random() * 6);
-    this.music.setSettings('whereAreMyFriends', random);
-    this.music.changeSong(this.music.albums.whereAreMyFriends.songs[random]);
-    this.music.currentSong = random;
-    this.music.currentAlbum = 'whereAreMyFriends';
+    this.music.setCurrentAlbumSong('whereAreMyFriends', random);
   }
 }

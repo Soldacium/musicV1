@@ -5,4 +5,68 @@
   <div class="router-wrap">
     <router-outlet></router-outlet>
   </div>
+
+  <div class="player-controls" [ngClass]="{ visible: showControls }">
+    <div class="controls-container">
+      <div class="song-info">
+        <div class="album-cover">
+          <img [src]="currentAlbumCover" [alt]="currentSongName" />
+        </div>
+        <div class="song-details">
+          <div class="song-name">{{ currentSongName }}</div>
+          <div class="artist-name">{{ currentArtistName }}</div>
+        </div>
+      </div>
+
+      <div class="main-controls">
+        <button class="control-btn" (click)="previousSong()" [disabled]="!canGoPrevious">
+          <img src="assets/icons/previous.svg" alt="Previous" />
+        </button>
+
+        <button class="control-btn play-pause" (click)="togglePlayPause()">
+          <img *ngIf="!isPlaying" src="assets/icons/play.svg" alt="Play" class="play-icon" />
+          <img *ngIf="isPlaying" src="assets/icons/pause.svg" alt="Pause" class="pause-icon" />
+        </button>
+
+        <button class="control-btn" (click)="nextSong()" [disabled]="!canGoNext">
+          <img src="assets/icons/next.svg" alt="Next" />
+        </button>
+      </div>
+
+      <div class="progress-container">
+        <div class="time-display">
+          <span class="current-time">{{ formatTime(currentTime) }}</span>
+          <span class="total-time">{{ formatTime(duration) }}</span>
+        </div>
+        <div class="progress-bar" (click)="seekTo($event)">
+          <div class="progress-track">
+            <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+            <div class="progress-handle" [style.left.%]="progressPercentage"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="volume-control">
+        <button class="control-btn volume-btn" (click)="toggleMute()">
+          <img
+            *ngIf="!isMuted && volume > 0.5"
+            src="assets/icons/volume-high.svg"
+            alt="High Volume"
+          />
+          <img
+            *ngIf="!isMuted && volume <= 0.5 && volume > 0"
+            src="assets/icons/volume-medium.svg"
+            alt="Medium Volume"
+          />
+          <img *ngIf="isMuted || volume === 0" src="assets/icons/volume-mute.svg" alt="Muted" />
+        </button>
+        <div class="volume-slider" (click)="setVolume($event)">
+          <div class="volume-track">
+            <div class="volume-fill" [style.width.%]="volumePercentage"></div>
+            <div class="volume-handle" [style.left.%]="volumePercentage"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
